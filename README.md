@@ -36,7 +36,8 @@ asc-openmp-mpi-homework/
 ├── scripts/
 │   ├── collect_env_info.sh
 │   ├── pack_submission.sh
-│   └── run_baseline.sh
+│   ├── run_baseline.sh
+│   └── run_long_jacobi.sh
 ├── src/
 │   ├── jacobi_baseline.cpp
 │   ├── jacobi_omp.cpp
@@ -215,6 +216,7 @@ src/jacobi_omp.cpp
 | 小规模 | `n=512, steps=500` |
 | 中规模 | `n=2048, steps=1000` |
 | 大规模 | `n=4096, steps=3000` |
+| 长耗时规模 | `n=4096, steps=180000` |
 
 命令示例：
 
@@ -224,6 +226,46 @@ OMP_NUM_THREADS=4 ./build/jacobi_omp 512 500
 ```
 
 大规模可能运行时间较长。报告中需要说明每个规模是否完成、运行了多长时间，以及机器配置是否足以支撑该规模。
+
+长耗时规模用于观察优化效果。在一台 Intel Core Ultra 7 155H 笔记本上，`n=4096, steps=3000` 的串行 baseline 约为 62 秒，因此 `n=4096, steps=180000` 预计接近 1 小时。不同机器的时间会有差异，报告中以自己机器的实测时间为准。
+
+可以用脚本运行长耗时任务：
+
+```bash
+bash scripts/run_long_jacobi.sh
+```
+
+脚本默认运行：
+
+```bash
+./build/jacobi_baseline 4096 180000
+```
+
+完成优化后，再运行优化版本：
+
+```bash
+MODE=omp OMP_NUM_THREADS=4 bash scripts/run_long_jacobi.sh
+```
+
+也可以一次运行 baseline 和优化版：
+
+```bash
+MODE=both OMP_NUM_THREADS=4 bash scripts/run_long_jacobi.sh
+```
+
+如果担心时间过长，可以先用短任务估算：
+
+```bash
+./build/jacobi_baseline 4096 3000
+```
+
+估算方式：
+
+```text
+预计长任务时间 = 短任务时间 * 180000 / 3000
+```
+
+例如短任务耗时 60 秒，则长任务约为 3600 秒。
 
 ### 8.3 优化方向
 
@@ -307,6 +349,7 @@ bash scripts/pack_submission.sh <姓名> <学号> <报告PDF路径>
 优秀完成可以包括：
 
 - 完成全部三档规模；
+- 完成长耗时 Jacobi 规模，并给出优化前后对比；
 - 对不同线程数进行对比；
 - 作业一合理设置任务阈值；
 - 作业二有清晰的缓存或调度分析；

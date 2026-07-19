@@ -63,6 +63,26 @@ module load gcc
 - 是内存不足、时间过长，还是程序报错；
 - 当前能完成的最大规模是多少。
 
+长耗时 Jacobi 规模默认是：
+
+```bash
+bash scripts/run_long_jacobi.sh
+```
+
+它会运行 `n=4096, steps=180000`。在一台 Intel Core Ultra 7 155H 笔记本上，串行 baseline 预计接近 1 小时。不同机器差异很大，报告中写自己的实测结果即可。
+
+脚本默认只运行串行 baseline。完成优化后，可以运行：
+
+```bash
+MODE=omp OMP_NUM_THREADS=4 bash scripts/run_long_jacobi.sh
+```
+
+如果需要临时降低规模，可以改环境变量：
+
+```bash
+STEPS=60000 bash scripts/run_long_jacobi.sh
+```
+
 ## 可以使用 MPI 吗
 
 可以作为拓展，但基础要求以 OpenMP 优化为主。
