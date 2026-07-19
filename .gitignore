@@ -1,0 +1,15 @@
+build/
+results/*
+outputs/*
+submissions/*
+!results/.gitkeep
+!outputs/.gitkeep
+!submissions/.gitkeep
+*.o
+*.out
+*.log
+*.tar.gz
+*.zip
+*.pdf
+*.exe
+.DS_Store
